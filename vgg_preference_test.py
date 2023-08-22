@@ -10,10 +10,10 @@ from torchvision import models
 import custom_dataset
 from sklearn.metrics import confusion_matrix, classification_report, f1_score, precision_score, recall_score
 
-DATASET = "3s_genre_dataset_2"
-CSV_FILE = "3s_genre_images.csv"
-FULL_MODEL_PATH = "vgg_models/" + "genre/" + "vgg_T_3_E_7_LR_001_M9_TVT_72_18_10__2.pt"
-INF_MODEL_PATH = "vgg_models/" + "genre/" + "vgg_T_3_E_7_LR_001_M9_TVT_72_18_10__2_INF.pt"
+DATASET = "5s_preference_dataset_3"
+CSV_FILE = "5s_preference_images.csv"
+FULL_MODEL_PATH = "vgg_models/" + "preference/" + "vgg_T_5_E_10_LR_001_M9_TVT_72_18_10__3.pt"
+INF_MODEL_PATH = "vgg_models/" + "preference/" + "vgg_T_5_E_10_LR_001_M9_TVT_72_18_10__3_INF.pt"
 
 # validation function
 def test(model, test_dataloader, device):
@@ -91,7 +91,7 @@ test_loader = torch.utils.data.DataLoader(test_set, batch_size=32, shuffle=False
 vgg16 = torch.load(FULL_MODEL_PATH)
 print(vgg16)
 # loss function
-criterion = nn.CrossEntropyLoss()
+criterion = nn.BCEWithLogitsLoss()
 
 start = time.time()
 test_loss, test_accuracy = test(vgg16, test_loader, mps_device)
@@ -99,4 +99,3 @@ test_loss, test_accuracy = test(vgg16, test_loader, mps_device)
 end = time.time()
 
 print((end-start)/60, 'minutes')
-

@@ -10,11 +10,11 @@ from torchvision import models
 import custom_dataset
 from sklearn.metrics import confusion_matrix, classification_report
 
-DATASET = "5s_genre_dataset_3"
-CSV_FILE = "5s_genre_images.csv"
-EPOCHS = 7
-FULL_MODEL_PATH = "vgg_models/" + "genre/" + "vgg_T_5_E_7_LR_001_M9_TVT_72_18_10__3.pt"
-INF_MODEL_PATH = "vgg_models/" + "genre/" + "vgg_T_5_E_7_LR_001_M9_TVT_72_18_10__3_INF.pt"
+DATASET = "5s_preference_dataset_3"
+CSV_FILE = "5s_preference_images.csv"
+EPOCHS = 10
+FULL_MODEL_PATH = "vgg_models/" + "preference/" + "vgg_T_5_E_10_LR_001_M9_TVT_72_18_10__3.pt"
+INF_MODEL_PATH = "vgg_models/" + "preference/" + "vgg_T_5_E_10_LR_001_M9_TVT_72_18_10__3_INF.pt"
 
 # validation function
 def validate(model, test_dataloader, device):
@@ -137,8 +137,8 @@ vgg16.to(mps_device)
 # print(vgg16)
 
 
-# change the number of classes to 10
-vgg16.classifier[6].out_features = 10
+# change the number of classes to 2
+vgg16.classifier[6].out_features = 2
 # freeze convolution weights
 for param in vgg16.features.parameters():
     param.requires_grad = False
@@ -147,14 +147,14 @@ for param in vgg16.features.parameters():
 # Newly created modules have require_grad=True by default
 num_features = vgg16.classifier[6].in_features
 features = list(vgg16.classifier.children())[:-1] # Remove last layer
-features.extend([nn.Linear(num_features, 10)]) # Add our layer with 10 outputs
+features.extend([nn.Linear(num_features, 2)]) # Add our layer with 2 outputs
 vgg16.classifier = nn.Sequential(*features) # Replace the model classifier
 print(vgg16)
 
 # optimizer
 optimizer = optim.SGD(vgg16.classifier.parameters(), lr=0.001, momentum=0.9)
-# loss function
-criterion = nn.CrossEntropyLoss()
+# loss function - Binray cross entropy
+criterion = nn.BCEWithLogitsLoss()
 
 train_loss , train_accuracy = [], []
 val_loss , val_accuracy = [], []
